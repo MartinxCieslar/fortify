@@ -23,6 +23,11 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
+      - name: Install google chrome # by a script
+        run: |
+          chmod +x ./scripts/install_chrome.sh
+            ./scripts/install_chrome.sh
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
