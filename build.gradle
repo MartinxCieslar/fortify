@@ -1,0 +1,113 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'io.freefair.lombok' version '6.5.1'
+    id "net.serenity-bdd.serenity-gradle-plugin" version '3.4.1'
+}
+
+// java plugin settings
+sourceCompatibility = 11.0
+targetCompatibility = 11.0
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+ext {
+    //yml file parser -> for logging conf
+    jaksonVersion = '2.13.4'
+    //logging
+    log4j2Version = '2.18.0'
+
+    serenityVersion = '3.4.1'
+    serenityCoreVersion = serenityVersion
+    serenityCucumberVersion = serenityVersion
+    serenityRestAssuredVersion = serenityVersion
+
+    assertjVersion = '3.23.1'
+    junit5Version = '5.9.0'
+    junit4Version = '4.13.2'
+
+}
+
+dependencies {
+    //serenity and verification
+    implementation "net.serenity-bdd:serenity-core:${serenityCoreVersion}"
+    testImplementation "net.serenity-bdd:serenity-ensure:${serenityCoreVersion}"
+    testImplementation "net.serenity-bdd:serenity-cucumber:${serenityCucumberVersion}"
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+    //For unit
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junit5Version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit5Version}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit5Version}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit5Version}"
+    testImplementation "junit:junit:${junit4Version}"
+
+    //for yml configuration of logger
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jaksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jaksonVersion}"
+    //log4j2 logger
+    implementation "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+    implementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4j2Version}"
+
+}
+
+test.configure {
+    //enable gradle native support for JUnit tests
+    it.useJUnitPlatform {
+        it.includeEngines 'junit-jupiter', 'junit-vintage'
+    }
+    it.exclude '**/runners/**'
+    it.finalizedBy aggregate
+}
+
+/**
+ * Passed properties as -P
+ * -PcucumberTags
+ * -PactiveEnvironment
+ *
+ * if env var CUCUMBER_FILTER_TAGS is defined, then overrides -PcucumberTags
+ * this overrides default behaviour, when precedens normally has -PcucumberTags
+ */
+def getCommandLineProperties(project) {
+    def envFilterTags = System.getenv('CUCUMBER_FILTER_TAGS')
+    def map = (envFilterTags != null && !envFilterTags.isBlank()
+        ? ["cucumber.filter.tags": envFilterTags]
+        : (project.hasProperty("cucumberTags") ? ["cucumber.filter.tags": cucumberTags] : [:]))
+    map << (project.hasProperty("activeEnvironment") ? ["environment": activeEnvironment] : ["environment": "default"])
+    map.forEach((k,v)-> println("${k}:${v}"))
+    map
+}
+
+tasks.register("integrationTest", Test) {
+    description = 'Runs integration tests.'
+    it.include '**/runners/integration/**'
+}
+
+tasks.register("smokeTest", Test) {
+    description = 'Runs smoke tests.'
+    it.include '**/runners/smoke/**'
+}
+
+tasks.register("debugTest", Test) {
+    it.dependsOn clearReports
+    description = 'Runs debug tests.'
+    it.include '**/runners/debug/**'
+    it.finalizedBy aggregate
+}
+
+
+tasks.withType(Test).configureEach() {
+    it.testLogging.showStandardStreams = true
+    it.systemProperties System.getProperties()
+    group = 'verification'
+    it.outputs.upToDateWhen { false }
+
+    if (it.getName() != "test") {
+        println it.getName()
+        it.systemProperties << getCommandLineProperties(project)
+    }
+}
+
+gradle.startParameter.continueOnFailure = true
