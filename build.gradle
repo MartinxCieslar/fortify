@@ -14,7 +14,7 @@ compileTestJava.options.encoding = "UTF-8"
 
 ext {
     //yml file parser -> for logging conf
-    jaksonVersion = '2.13.4'
+    jaksonVersion = '2.14.0'
     //logging
     log4j2Version = '2.18.0'
 

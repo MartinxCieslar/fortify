@@ -1,0 +1,48 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Smoke tests check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Install google chrome # by a script
+        run: |
+          chmod +x ./scripts/install_chrome.sh
+            ./scripts/install_chrome.sh
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run smoke tests
+        id: smokeTest
+        run: ./gradlew --init-script ./.github/workflows/init.gradle -PactiveEnvironment=prod smokeTest
+
+      #For smoke tests it is enough to collect a report only if something is wrong
+      - name: Aggregate test report
+        if: ${{ failure() }}
+        run: ./gradlew aggregate
+
+      - name: Archive test results
+        if: ${{ failure() && steps.smokeTest.conclusion != 'success' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-smoke-tests
+          path: target/site/serenity/
