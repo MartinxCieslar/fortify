@@ -41,7 +41,7 @@ jobs:
         run: ./gradlew aggregate
 
       - name: Archive test results
-        if: ${{ steps.smokeTest.outcome != 'success' }}
+        if: ${{ failure() && steps.smokeTest.conclusion != 'success' }}
         uses: actions/upload-artifact@v2
         with:
           name: test-results-smoke-tests
