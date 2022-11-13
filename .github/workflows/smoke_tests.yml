@@ -33,8 +33,7 @@ jobs:
 
       - name: Run smoke tests
         id: smokeTest
-        run: ./gradlew --init-script ./.github/workflows/init.gradle smokeTest
-          -PactiveEnvironment=prod
+        run: ./gradlew --init-script ./.github/workflows/init.gradle -PactiveEnvironment=prod smokeTest
 
       #For smoke tests it is enough to collect a report only if something is wrong
       - name: Aggregate test report
