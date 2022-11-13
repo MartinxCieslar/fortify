@@ -1,0 +1,16 @@
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://mvnrepository.com/" }
+    }
+    buildscript {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            maven { url "https://plugins.gradle.org/m2/" }
+            maven { url "https://mvnrepository.com/" }
+        }
+    }
+}
