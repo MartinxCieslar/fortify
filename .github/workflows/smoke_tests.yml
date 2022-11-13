@@ -31,9 +31,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Current server time
-        run: echo "$(date +'%Y-%m-%d_%H:%M:%S')"
-
       - name: Run smoke tests
         id: smokeTest
         run: ./gradlew --init-script ./.github/workflows/init.gradle smokeTest
