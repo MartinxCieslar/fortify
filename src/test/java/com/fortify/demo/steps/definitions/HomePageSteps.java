@@ -21,6 +21,7 @@ public class HomePageSteps {
     @Given("I open Alza shop page")
     public void openShopPage() {
         homePage.open();
+        homePage.logSessionDetails();
         actionDialog.closeDialogIfDisplayed();
     }
 
