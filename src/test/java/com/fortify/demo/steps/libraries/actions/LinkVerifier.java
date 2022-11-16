@@ -1,4 +1,4 @@
-package com.fortify.demo.steps.libraries;
+package com.fortify.demo.steps.libraries.actions;
 
 import static net.serenitybdd.core.environment.EnvironmentSpecificConfiguration.from;
 

@@ -6,29 +6,37 @@ import static com.fortify.demo.steps.libraries.page_objects.ProductCategoriesPan
 import static com.fortify.demo.steps.libraries.page_objects.ProductCategoriesPanel.hasLink;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fortify.demo.steps.libraries.LinkVerifier;
+import com.fortify.demo.steps.libraries.actions.LinkVerifier;
 import com.fortify.demo.steps.libraries.page_objects.ActionDialog;
+import com.fortify.demo.steps.libraries.page_objects.HeaderPage;
 import com.fortify.demo.steps.libraries.page_objects.HomePage;
 import com.fortify.demo.steps.libraries.page_objects.ProductCategoriesPanel;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import net.thucydides.core.annotations.Steps;
 import org.assertj.core.api.SoftAssertions;
 
+@Slf4j
 public class HomePageSteps {
 
     HomePage homePage;
     ActionDialog actionDialog;
     ProductCategoriesPanel productCategoriesPanel;
+    HeaderPage headerPageAction;
 
     @Steps
     LinkVerifier linkVerifier;
 
     @Given("I open Alza shop page")
     public void openShopPage() {
-        homePage.open();
-        actionDialog.closeDialogIfDisplayed();
+        if (!headerPageAction.logoIcon.isCurrentlyVisible()) {
+            homePage.open();
+            actionDialog.closeDialogIfDisplayed();
+        } else {
+            log.debug("Alza page is already opened.");
+        }
     }
 
     @Then("I see product categories:")

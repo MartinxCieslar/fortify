@@ -1,4 +1,3 @@
-@Debug
 @TestComponent:main_page
 @TestSuite:main_page
 @Smoke
@@ -33,3 +32,15 @@ Feature: Open home page of Alza shop and verify common content
       | Our brands                        |
     And I see that each category has leading image
     And I see that each category has valid link
+
+  @Test
+  @TC:MPC002
+  Scenario: Search field shows rich autocomplete on user's input
+    When I type term "xbox" to search field
+    Then I see autocomplete sections:
+      | Items    |
+      | Category |
+      | Article  |
+    And  I see that all items in section "Category" contains "xbox"
+    And  I see that all items in section "Suggestions" contains "xbox"
+    And  I see that all items in section "Items" contains "xbox"
