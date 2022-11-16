@@ -21,6 +21,10 @@ public class WispererActions {
         Serenity.clearSessionVariable(WISPERER_ITEMS_KEY);
     }
 
+    /**
+     * remember wisperer items for quicker checks between cucumber steps until new text is entered to search field.
+     * The remembered values are invalidated by {@link this#invalidateWispererItems()}
+     */
     private List<WispererItem> getWispererItems() {
         if (!Serenity.hasASessionVariableCalled(WISPERER_ITEMS_KEY)) {
             Serenity.setSessionVariable(WISPERER_ITEMS_KEY).to(headerPage.getWispererItems());
