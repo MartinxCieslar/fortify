@@ -1,6 +1,7 @@
 package com.fortify.demo.steps.libraries.page_objects;
 
 import static com.fortify.demo.steps.libraries.Utils.test;
+import static java.util.Objects.isNull;
 
 import java.util.List;
 import java.util.function.Function;
@@ -30,6 +31,21 @@ public class ProductCategoriesPanel extends PageObject {
             return image.isPresent()
                 && image.getAttribute("src").contains("/Foto/")
                 && test(image.getAttribute("src"), IMAGE_EXTENSION_REGEX);
+        };
+    }
+
+    public static Function<WebElementFacade, Boolean> hasLink() {
+        return elm -> {
+            WebElementFacade link = elm.find(By.cssSelector("a"));
+            return link.isPresent();
+        };
+    }
+
+    public static Function<WebElementFacade, String> extractLink() {
+        return elm -> {
+            WebElementFacade link = elm.find(By.cssSelector("a"));
+            String href = link.getAttribute("href");
+            return isNull(href) ? "" : href;
         };
     }
 

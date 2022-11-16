@@ -1,10 +1,14 @@
 @Debug
+@TestComponent:main_page
+@TestSuite:main_page
+@Smoke
+@Integration
 Feature: Open home page of Alza shop and verify common content
 
   Background:
     Given I open Alza shop page
 
-
+  @TC:MPC001
   Scenario: Verify category list is displayed on Alza shop page
     Then I see product categories:
       | Deal WeeksSPECIAL OFFERS          |
@@ -28,3 +32,4 @@ Feature: Open home page of Alza shop and verify common content
       | Health                            |
       | Our brands                        |
     And I see that each category has leading image
+    And I see that each category has valid link
