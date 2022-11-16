@@ -1,5 +1,6 @@
 package com.fortify.demo.steps.definitions;
 
+import com.fortify.demo.domain.SectionVerification;
 import com.fortify.demo.steps.libraries.actions.WispererActions;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -30,6 +31,14 @@ public class HeaderPageSteps {
     public void verifySectionItemsContainsText(String sectionName, String expectedText) {
         wispererActions.verifyWispererHasSectionName(sectionName);
         wispererActions.verifyEachItemInSectionContainsText(sectionName, expectedText);
+    }
+
+    @Then("I see that section has no more than items count:")
+    public void verifySectionHasNoMoreThenXItems(List<SectionVerification> items) {
+        items.forEach(
+            item -> wispererActions.verifySectionHasNoMoreThenXItems(item)
+        );
+
     }
 
 }

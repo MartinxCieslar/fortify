@@ -44,3 +44,9 @@ Feature: Open home page of Alza shop and verify common content
     And  I see that all items in section "Category" contains "xbox"
     And  I see that all items in section "Suggestions" contains "xbox"
     And  I see that all items in section "Items" contains "xbox"
+    And  I see that section has no more than items count:
+      | sectionName | maxCount |
+      | Suggestions | 3        |
+      | Items       | 3        |
+      | Category    | 5        |
+      | Article     | 5        |

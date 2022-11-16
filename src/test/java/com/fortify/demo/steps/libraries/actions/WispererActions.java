@@ -2,6 +2,7 @@ package com.fortify.demo.steps.libraries.actions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fortify.demo.domain.SectionVerification;
 import com.fortify.demo.domain.WispererItem;
 import com.fortify.demo.steps.libraries.page_objects.HeaderPage;
 import java.util.List;
@@ -13,7 +14,8 @@ import org.assertj.core.api.SoftAssertions;
 
 public class WispererActions {
 
-    private final String WISPERER_ITEMS_KEY = WispererActions.class.getName() + ".wispererItems";
+    private static final String EXCLUDE_SHOW_ALL_RESULTS = "Show all results";
+    private static final String WISPERER_ITEMS_KEY = WispererActions.class.getName() + ".wispererItems";
 
     HeaderPage headerPage;
 
@@ -47,35 +49,41 @@ public class WispererActions {
     @Step
     public void typeTextToSearchField(String input) {
         invalidateWispererItems();
-        headerPage.searchInput
-            .waitUntilVisible()
-            .type(input);
+        headerPage.searchInput.waitUntilVisible().type(input);
     }
 
     @Step
     public void verifyEachItemInSectionContainsText(final String sectionName, final String expectedText) {
-        SoftAssertions.assertSoftly(
-            softly -> {
-                getItemTextForSection(sectionName).forEach(
-                    item -> softly.assertThat(item)
-                        .as("Item '%s' under wisperer section '%s' don't contains text: %s", item, sectionName, expectedText)
-                        .containsIgnoringCase(expectedText)
-                );
-            }
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            getItemTextForSection(sectionName).forEach(
+                item -> softly.assertThat(item)
+                    .as("Item '%s' under wisperer section '%s' don't contains text: %s", item, sectionName, expectedText)
+                    .containsIgnoringCase(expectedText));
+        });
     }
 
     @Step
     public void verifyWispererHasAllSectionNames(List<String> expectedSections) {
-        assertThat(headerPage.getSectionNames())
-            .as("Expected sections in wisperer table are not displayed.")
-            .containsAll(expectedSections);
+        assertThat(headerPage.getSectionNames()).as("Expected sections in wisperer table are not displayed.").containsAll(expectedSections);
     }
 
+    @Step("Verify section '{0.sectionName}' has no more then '{0.maxItemCount}' items")
+    public void verifySectionHasNoMoreThenXItems(SectionVerification sectionVerification) {
+        assertThat(getItemTextForSection(sectionVerification.getSectionName()))
+            .hasSizeLessThanOrEqualTo(sectionVerification.getMaxItemCount());
+    }
+
+    /**
+     * Filter "Show all results", as it is not part of the sections.
+     *
+     * @param sectionName a name of section for which the items will be returned
+     * @return a filtered list by section
+     */
     private List<String> getItemTextForSection(String sectionName) {
         return getWispererItems().stream()
             .filter(wispererItem -> wispererItem.getSectionName().equalsIgnoreCase(sectionName))
             .map(WispererItem::getItemName)
+            .filter(EXCLUDE_SHOW_ALL_RESULTS::equalsIgnoreCase)
             .collect(Collectors.toList());
     }
 
