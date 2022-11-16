@@ -31,9 +31,10 @@ ext {
 
 dependencies {
     //serenity and verification
-    implementation "net.serenity-bdd:serenity-core:${serenityCoreVersion}"
+    testImplementation "net.serenity-bdd:serenity-core:${serenityCoreVersion}"
     testImplementation "net.serenity-bdd:serenity-ensure:${serenityCoreVersion}"
     testImplementation "net.serenity-bdd:serenity-cucumber:${serenityCucumberVersion}"
+    testImplementation "net.serenity-bdd:serenity-rest-assured:${serenityRestAssuredVersion}"
     testImplementation "org.assertj:assertj-core:${assertjVersion}"
 
     //For unit
