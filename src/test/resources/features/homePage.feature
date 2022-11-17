@@ -53,6 +53,6 @@ Feature: Open home page of Alza shop and verify common content
 
 
   @TC:MPW003
-  Scenario: Search field shows rich autocomplete on user's input
+  Scenario: Search field shows rich autocomplete on user's invalid input
     When I type term "xboxa" to search field
     Then I see that wisperer contains only "Show all results"
