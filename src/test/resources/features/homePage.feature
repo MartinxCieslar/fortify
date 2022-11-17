@@ -33,8 +33,8 @@ Feature: Open home page of Alza shop and verify common content
     And I see that each category has leading image
     And I see that each category has valid link
 
-  @Test
-  @TC:MPC002
+
+  @TC:MPW002
   Scenario: Search field shows rich autocomplete on user's input
     When I type term "xbox" to search field
     Then I see autocomplete sections:
@@ -50,3 +50,9 @@ Feature: Open home page of Alza shop and verify common content
       | Items       | 3        |
       | Category    | 5        |
       | Article     | 5        |
+
+
+  @TC:MPW003
+  Scenario: Search field shows rich autocomplete on user's input
+    When I type term "xboxa" to search field
+    Then I see that wisperer contains only "Show all results"
