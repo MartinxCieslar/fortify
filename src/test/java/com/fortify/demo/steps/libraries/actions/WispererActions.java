@@ -1,5 +1,6 @@
 package com.fortify.demo.steps.libraries.actions;
 
+import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fortify.demo.domain.SectionVerification;
@@ -8,6 +9,7 @@ import com.fortify.demo.steps.libraries.page_objects.HeaderPage;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.serenitybdd.core.Serenity;
+import net.serenitybdd.core.pages.WebElementFacade;
 import net.thucydides.core.annotations.Step;
 import org.assertj.core.api.SoftAssertions;
 
@@ -49,22 +51,34 @@ public class WispererActions {
     @Step
     public void typeTextToSearchField(String input) {
         invalidateWispererItems();
-        headerPage.searchInput.waitUntilVisible().type(input);
+        WebElementFacade wispererItem = headerPage.oneWispererItem();
+        headerPage.searchInput.waitUntilVisible().clear();
+        headerPage.waitUntilStale(wispererItem);
+        headerPage.searchInput.type(input);
     }
 
     @Step
     public void verifyEachItemInSectionContainsText(final String sectionName, final String expectedText) {
-        SoftAssertions.assertSoftly(softly -> {
-            getItemTextForSection(sectionName).forEach(
+        List<String> items = isNull(sectionName) || sectionName.isBlank() ?
+            getWispererItems().stream().map(WispererItem::getItemName).collect(Collectors.toList()) :
+            getItemTextForSection(sectionName);
+
+        SoftAssertions.assertSoftly(
+            softly -> items.forEach(
                 item -> softly.assertThat(item)
-                    .as("Item '%s' under wisperer section '%s' don't contains text: %s", item, sectionName, expectedText)
-                    .containsIgnoringCase(expectedText));
-        });
+                    .as("Item '%s' under wisperer section '%s' don't contains text: %s",
+                        item,
+                        sectionName,
+                        expectedText)
+                    .containsIgnoringCase(expectedText))
+        );
     }
 
     @Step
     public void verifyWispererHasAllSectionNames(List<String> expectedSections) {
-        assertThat(headerPage.getSectionNames()).as("Expected sections in wisperer table are not displayed.").containsAll(expectedSections);
+        assertThat(headerPage.getSectionNames())
+            .as("Expected sections in wisperer table are not displayed.")
+            .containsAll(expectedSections);
     }
 
     @Step("Verify section '{0.sectionName}' has no more then '{0.maxItemCount}' items")

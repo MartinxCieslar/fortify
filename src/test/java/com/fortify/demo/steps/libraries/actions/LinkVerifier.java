@@ -5,6 +5,7 @@ import static net.serenitybdd.core.environment.EnvironmentSpecificConfiguration.
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import net.serenitybdd.rest.SerenityRest;
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.hc.core5.http.HttpStatus;
 
@@ -14,6 +15,7 @@ public class LinkVerifier {
 
     private EnvironmentVariables environmentVariables;
 
+    @Step
     public boolean isLinkBroken(String url) {
         Response response = sendRequest(Method.GET, url);
         return response.getStatusCode() != HttpStatus.SC_OK;

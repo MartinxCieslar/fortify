@@ -38,7 +38,11 @@ public class HeaderPageSteps {
         items.forEach(
             item -> wispererActions.verifySectionHasNoMoreThenXItems(item)
         );
+    }
 
+    @Then("I see that wisperer contains only {string}")
+    public void verifySectionHasNoMoreThenXItems(String expectedText) {
+        wispererActions.verifyEachItemInSectionContainsText("", expectedText);
     }
 
 }
